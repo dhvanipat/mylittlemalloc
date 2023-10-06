@@ -1,0 +1,9 @@
+*delete this before submitting*
+
+to be implemented:
+- mymalloc.c
+- mymalloc.h
+- memgrind.c
+- test files
+    - what is a Make-file
+- last: project README
