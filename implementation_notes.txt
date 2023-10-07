@@ -7,3 +7,8 @@ to be implemented:
 - test files
     - what is a Make-file
 - last: project README
+
+
+
+
+test ignore
