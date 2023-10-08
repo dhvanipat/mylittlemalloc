@@ -41,6 +41,18 @@ void free(void* ptr){
 
 }
 
-void coalesce(void*){
+void coalesce(){
+   struct chunkheader* curr = (struct chunkerheader*)memory;
 
+   while (curr != NULL){
+       if ((curr->is_allocated == 0) && (curr->size >= sizeof(struct chunkheader)) {
+          struct chunkheader* next_chunk = (struct chunkheader*)((char*)curr + curr->size + sizeof(struct chunkheader));
+          if (next_chunk->is_allocated == 0) {
+             //merge current chunk with the next chunk
+             (curr->size) += (next_chunk->size) + sizeof(struct chunkheader);
+          }
+       }
+       curr = (struct chunkheader*)((char*)curr + (curr->size) + sizeof(struct chunkheader));
+   }
 }
+
