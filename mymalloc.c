@@ -21,12 +21,11 @@ void memory_block(size_t block_size) {
    first_chunk->is_allocated = 0;
 }
 
-void* malloc(int){
-    //(size + 7) & ~7
+void *mymalloc(size_t size, char *file, int line) {
+
 }
 
-void free(void* ptr){
-
+void myfree(void *ptr, char *file, int line) {
    //edge cases (like ptr is null, never allocated, etc)
    if (ptr == NULL){
       return;
