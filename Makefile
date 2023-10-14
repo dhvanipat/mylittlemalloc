@@ -9,8 +9,8 @@ memgrind.o: memgrind.c mymalloc.h
 	$(CC) $(CFLAGS) -c memgrind.c
 
 test_dump: test_dump.o mymalloc.o
-	$(CC) $(CFLAGS) test_dump.o mymalloc.o -o testdump
-	./testdump
+	$(CC) $(CFLAGS) test_dump.o mymalloc.o -o test_dump
+	./test_dump
 
 test_dump.o: test_dump.c mymalloc.c
 	$(CC) $(CFLAGS) -c test_dump.c

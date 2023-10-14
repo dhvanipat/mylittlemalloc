@@ -5,18 +5,18 @@
 
 /* Some commonly used typedefs/macros */
 
-#define MEMLENGTH 512 // length of working memory usable by malloc
-#define HEADER_SIZE 8 // size of header: is_allocated + size
-typedef unsigned long int size_t;
-
+#define MEMLENGTH 512 // NOT the number of bytes of working memory, which is 4096
+#define HEADER_SIZE sizeof(chunkheader) // size of header: 8
+#define ROUNDUP8(x) (((x) + 7) & (-8))
 
 /* Private data that should not be visible outside this library */
 
 static double memory[MEMLENGTH];
+
 int is_initialized = 0; // is this allowed? unsure
 typedef struct _chunkheader {
-   size_t total_size; // Size of whole chunk, HEADER + PAYLOAD
-   int is_allocated; // Chunk is allocated or not: 0 (not allocated), 1 (allocated)
+   unsigned int total_size; // Size of whole chunk, HEADER + PAYLOAD
+   unsigned int is_allocated; // Chunk is allocated or not: 0 (not allocated), 1 (allocated)
 } chunkheader;
 
 
@@ -24,24 +24,11 @@ typedef struct _chunkheader {
 
 // Create the first chunk as a free block
 static void init() {
-   //block_size = (block_size + 7) & ~7; //ensures alignment of 8 bytes
-   // wha
-
    chunkheader* first_chunk = (chunkheader*) memory;
-   first_chunk->total_size = MEMLENGTH;
+   first_chunk->total_size = MEMLENGTH * sizeof(double);
    first_chunk->is_allocated = 0;
 
    is_initialized = 1;
-}
-
-// pads extra bytes for header alignment
-static int pad(size_t size){
-   if(size % HEADER_SIZE != 0) {
-      size = size / HEADER_SIZE * HEADER_SIZE;
-      size += HEADER_SIZE;
-   }
-
-   return size;
 }
 
 // Combines any free chunks before or after this chunk when it is freed
@@ -67,27 +54,32 @@ void *mymalloc(size_t size, char *file, int line) {
    if(is_initialized == 0){
       init();
    }
-   
-   size = pad(size);
+
+   size = ROUNDUP8(size);
 
    chunkheader* current_chunk = (chunkheader*)memory;
-   while(current_chunk < (chunkheader*) memory + MEMLENGTH) {  //iterate through all chunks within MEMLENGTH
-      if(current_chunk->is_allocated == 0 && current_chunk->total_size - HEADER_SIZE >= size){   // chunk is free
-         //void* ptr = current_chunk + HEADER_SIZE;
-         printf("%p\n", current_chunk + HEADER_SIZE);
-         printf("%p\n", &current_chunk->total_size);
-         printf("%ld\n", current_chunk + HEADER_SIZE - (chunkheader*)&current_chunk->total_size);
-         //printf("%ld", *((long unsigned int*)ptr));
-         return current_chunk + HEADER_SIZE;
-      }
-      current_chunk += current_chunk->total_size;      
-   }
-   printf("ERROR: either no chunks of large enough space or all chunks being used\n"); //update this eventually, error not enough memory
-   return NULL;
 
-   // printf("%d\n", *current_chunk - HEADER_SIZE);
-   // printf("%d\n", *((int*)memory));
-   // printf("%p, end of memory: %p", memory, memory + MEMLENGTH);
+   while((void*)current_chunk < (void*)(memory + MEMLENGTH)) {  //iterate through all chunks within the array
+      if(current_chunk->is_allocated == 0 && current_chunk->total_size - HEADER_SIZE >= size){   // chunk is free and big enough
+         printf("found\n");
+         if(current_chunk->total_size - HEADER_SIZE == size){
+            current_chunk->is_allocated = 1;
+            return current_chunk + 1;
+         }else{
+            chunkheader* new_chunk = current_chunk + 1 + size/8;
+            new_chunk->total_size = current_chunk->total_size - HEADER_SIZE - size;
+            new_chunk->is_allocated = 0;
+
+            current_chunk->total_size = current_chunk->total_size - new_chunk->total_size;
+            current_chunk->is_allocated = 1;
+
+            return current_chunk + 1;
+         }
+      }
+      current_chunk += (current_chunk->total_size)/HEADER_SIZE;
+   }
+   // printf("ERROR: either no chunks of large enough space or all chunks being used\n"); //update this eventually, error not enough memory
+   return NULL;
 }
 
 void myfree(void *ptr, char *file, int line) {
