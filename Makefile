@@ -8,12 +8,15 @@ memgrind: memgrind.o mymalloc.o
 memgrind.o: memgrind.c mymalloc.h
 	$(CC) $(CFLAGS) -c memgrind.c
 
-test_dump: test_dump.o mymalloc.o
-	$(CC) $(CFLAGS) test_dump.o mymalloc.o -o test_dump
-	./test_dump
+test4: iterate_chunks.o mymalloc.o test4.o
+	$(CC) $(CFLAGS) iterate_chunks.o mymalloc.o test4.o -o test4
+	./test4
 
-test_dump.o: test_dump.c mymalloc.c
-	$(CC) $(CFLAGS) -c test_dump.c
+test4.o: test4.c mymalloc.h iterate_chunks.h
+	$(CC) $(CFLAGS) -c test4.c
+
+iterate_chunks.o: iterate_chunks.h iterate_chunks.c
+	$(CC) $(CFLAGS) -c iterate_chunks.c
 
 mymalloc.o: mymalloc.h mymalloc.c
 	$(CC) $(CFLAGS) -c mymalloc.c

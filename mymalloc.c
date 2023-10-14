@@ -1,4 +1,3 @@
-#include <stdio.h> // Remove when done
 #include <stdlib.h>
 #include "mymalloc.h"
 
@@ -51,21 +50,22 @@ static void coalesce(void *ptr, char *file, int line){
 /* Public Functions*/
 
 void *mymalloc(size_t size, char *file, int line) {
-   if(is_initialized == 0){
+   if (is_initialized == 0) {
       init();
    }
 
    size = ROUNDUP8(size);
 
-   chunkheader* current_chunk = (chunkheader*)memory;
-
-   while((void*)current_chunk < (void*)(memory + MEMLENGTH)) {  //iterate through all chunks within the array
-      if(current_chunk->is_allocated == 0 && current_chunk->total_size - HEADER_SIZE >= size){   // chunk is free and big enough
-         printf("found\n");
-         if(current_chunk->total_size - HEADER_SIZE == size){
+   chunkheader* current_chunk = (chunkheader*)memory; // index pointer to iterate through memory, starts at memory[0]
+   while ((void*)current_chunk < (void*)(memory + MEMLENGTH)) {  // iterate through all chunks within the array
+      if (current_chunk->is_allocated == 0 && current_chunk->total_size - HEADER_SIZE >= size) {
+         // chunk is free and big enough
+         if (current_chunk->total_size - HEADER_SIZE == size) {
+            // chunk is the exact amount requested, do not have to split the chunk
             current_chunk->is_allocated = 1;
             return current_chunk + 1;
-         }else{
+         } else {
+            // chunk is bigger than requested, split the chunk so remaining memory can be allocated to another call
             chunkheader* new_chunk = current_chunk + 1 + size/8;
             new_chunk->total_size = current_chunk->total_size - HEADER_SIZE - size;
             new_chunk->is_allocated = 0;
@@ -76,6 +76,7 @@ void *mymalloc(size_t size, char *file, int line) {
             return current_chunk + 1;
          }
       }
+      // next available chunk, may not exist
       current_chunk += (current_chunk->total_size)/HEADER_SIZE;
    }
    // printf("ERROR: either no chunks of large enough space or all chunks being used\n"); //update this eventually, error not enough memory
