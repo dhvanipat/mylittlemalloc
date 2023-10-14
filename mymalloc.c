@@ -92,14 +92,19 @@ void myfree(void *ptr, char *file, int line) {
    }
 
    // Retrieve header of chunk to be freed
-   chunkheader* freed_chunk = (chunkheader*)(ptr - HEADER_SIZE);
+   chunkheader* freed_chunk = (chunkheader*)ptr - 1;
+
+   //not so sure if should subtract by 8 (HEADERSIZE)?
+   //chunkheader* freed_chunk = (chunkheader*)(ptr - HEADER_SIZE);
    freed_chunk->is_allocated = 0;
 
    //coalesce -  no longer in a separate method
    chunkheader* prev_chunk = NULL;
    chunkheader* curr_chunk = (chunkheader*)memory;
+   memoryEnd = (void*)(memory + MEMLENGTH);
 
-   while (curr_chunk != NULL) {
+   //need to make sure start < memEnd
+   while ((void*)curr_chunk < memoryEnd) {
       if (curr_chunk->is_allocated == 0) {
 
          //merge with the previous chunk (if it exists)
