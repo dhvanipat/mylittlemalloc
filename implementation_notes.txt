@@ -15,7 +15,7 @@ edge cases:
         - solution: allocate it as a chunk w ith size 0
     - real malloc still returns a pointer for 0 bytes
         - but we should confirm this in the writeup or with an instructor
-
+    - make sure free works as planned on a freshly initiated chunk of memory where there is one chunk of size 0
 
 init
 
