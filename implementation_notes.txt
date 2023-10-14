@@ -15,3 +15,33 @@ edge cases:
         - solution: allocate it as a chunk w ith size 0
     - real malloc still returns a pointer for 0 bytes
         - but we should confirm this in the writeup or with an instructor
+
+
+init
+
+one big chunk
+size = 0
+isallocated = 0
+
+malloc
+1. is chunk free
+2. is size big enough
+
+free
+1. valid address?
+go through start, iterate through all chunks, find a match
+if match, free
+if not, illegalpointerexception
+coalesce
+
+
+coalesce
+1. check if there is chunk in front AND there is chunk behind
+2. check if they are allocated
+if either is free merge the chunks
+
+tests:
+come up with 2 more stress tests
+
+idea:
+1 for coalesce
