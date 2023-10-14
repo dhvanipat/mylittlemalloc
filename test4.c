@@ -9,5 +9,7 @@ int main(){
         malloc(i);
     }
 
+    printf("%p", my_ptr);
+
     display_all_chunks(my_ptr);
 }
