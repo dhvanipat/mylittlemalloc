@@ -30,21 +30,22 @@ static void init() {
    is_initialized = 1;
 }
 
+//DIDN'T FIND PURPOSE OF HAVING SEPARATE COALESCE
 // Combines any free chunks before or after this chunk when it is freed
-static void coalesce(void *ptr, char *file, int line){
-   chunkheader* curr = (chunkheader*)memory;
-
-   while (curr != NULL){
-       if ((curr->is_allocated == 0) && (curr->total_size >= sizeof(chunkheader))) {
-         chunkheader* next_chunk = (chunkheader*)((char*)curr + curr->total_size + sizeof(chunkheader));
-          if (next_chunk->is_allocated == 0) {
-             //merge current chunk with the next chunk
-             (curr->total_size) += (next_chunk->total_size) + sizeof(chunkheader);
-          }
-       }
-       curr = (chunkheader*)((char*)curr + (curr->total_size) + sizeof(chunkheader));
-   }
-}
+//static void coalesce(void *ptr, char *file, int line){
+//   chunkheader* curr = (chunkheader*)memory;
+//
+//   while (curr != NULL){
+//       if ((curr->is_allocated == 0) && (curr->total_size >= sizeof(chunkheader))) {
+//         chunkheader* next_chunk = (chunkheader*)((char*)curr + curr->total_size + sizeof(chunkheader));
+//          if (next_chunk->is_allocated == 0) {
+//             //merge current chunk with the next chunk
+//             (curr->total_size) += (next_chunk->total_size) + sizeof(chunkheader);
+//          }
+//       }
+//       curr = (chunkheader*)((char*)curr + (curr->total_size) + sizeof(chunkheader));
+//   }
+//}
 
 
 /* Public Functions*/
@@ -84,6 +85,7 @@ void *mymalloc(size_t size, char *file, int line) {
 }
 
 void myfree(void *ptr, char *file, int line) {
+
    // Edge cases (like ptr is null, never allocated, etc)
    if (ptr == NULL){
       return;
@@ -93,7 +95,26 @@ void myfree(void *ptr, char *file, int line) {
    chunkheader* freed_chunk = (chunkheader*)(ptr - HEADER_SIZE);
    freed_chunk->is_allocated = 0;
 
-   //coalesce -  needs to be edited
-   coalesce(ptr, file, line);
+   //coalesce -  no longer in a separate method
+   chunkheader* prev_chunk = NULL;
+   chunkheader* curr_chunk = (chunkheader*)memory;
 
+   while (curr_chunk != NULL) {
+      if (curr_chunk->is_allocated == 0) {
+
+         //merge with the previous chunk (if it exists)
+         if (prev_chunk != NULL && prev_chunk->is_allocated == 0) {
+             prev_chunk->total_size += (curr_chunk->total_size + HEADER_SIZE);
+         }
+
+         //merge with the next chunk (if it exists)
+         chunkheader* next_chunk = (chunkheader*)((char*)curr_chunk + curr_chunk->total_size + HEADER_SIZE);
+         if (next_chunk != NULL && next_chunk->is_allocated == 0) {
+            curr_chunk->total_size += (next_chunk->total_size + HEADER_SIZE);
+         }
+     }
+     //move to the next chunk to check (iterate across)
+     prev_chunk = curr_chunk;
+     curr_chunk = (chunkheader*)((char*)curr_chunk + curr_chunk->total_size + HEADER_SIZE);
+   }
 }
