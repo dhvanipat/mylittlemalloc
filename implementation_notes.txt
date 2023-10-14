@@ -1,11 +1,8 @@
 *delete this before submitting*
 
 to be implemented:
-- mymalloc.c
-- mymalloc.h
 - memgrind.c
 - test files
-    - what is a Make-file
 - last: project README
 
 
@@ -17,15 +14,7 @@ edge cases:
         - but we should confirm this in the writeup or with an instructor
     - make sure free works as planned on a freshly initiated chunk of memory where there is one chunk of size 0
 
-init
 
-one big chunk
-size = 0
-isallocated = 0
-
-malloc
-1. is chunk free
-2. is size big enough
 
 free
 1. valid address?
@@ -45,3 +34,6 @@ come up with 2 more stress tests
 
 idea:
 1 for coalesce
+ coalesce all from before
+ coalesce all from after
+ coalesce both
