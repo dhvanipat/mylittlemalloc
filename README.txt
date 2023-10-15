@@ -1,7 +1,7 @@
 My Little Malloc Project
 
     Collaborators
-    - Dhvani Patel
+    - Dhvani Patel (dgp69)
     - Ananya Balaji
 
     Test Plan

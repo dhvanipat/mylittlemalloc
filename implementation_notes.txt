@@ -37,3 +37,14 @@ idea:
  coalesce all from before
  coalesce all from after
  coalesce both
+
+
+ questions:
+ - can we make memlength public so test files can account for changes in memlength
+ - test where memlength != number divisible by header
+ - is it ok if our implementation was slightly different than the writeup but it behaves the same
+    - we used struct pointers to iterate and not char pointers
+    - init to one big chunk thats not size 0
+
+ - do we put the executables in the final tar submission?
+ 
