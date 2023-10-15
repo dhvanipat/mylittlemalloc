@@ -2,11 +2,19 @@ CC = gcc
 CFLAGS = -g -Wall -Wvla -Werror -fsanitize=address,undefined
 
 memgrind: memgrind.o mymalloc.o
-	$(CC) $(CFLAGS) memgrind.o mymalloc.o -o memgrind
+	$(CC) $(CFLAGS) memgrind.o mymalloc.o iterate_chunks.o -o memgrind
 	./memgrind
 
-memgrind.o: memgrind.c mymalloc.h
+memgrind.o: memgrind.c mymalloc.h iterate_chunks.o
 	$(CC) $(CFLAGS) -c memgrind.c
+
+memgrind_from_hackmd: memgrind_from_hackmd.o mymalloc.o
+	$(CC) $(CFLAGS) memgrind_from_hackmd.o mymalloc.o iterate_chunks.o -o memgrind_from_hackmd
+	./memgrind_from_hackmd
+
+memgrind_from_hackmd.o: memgrind_from_hackmd.c mymalloc.h iterate_chunks.o
+	$(CC) $(CFLAGS) -c memgrind_from_hackmd.c
+
 
 test4: iterate_chunks.o mymalloc.o test4.o
 	$(CC) $(CFLAGS) iterate_chunks.o mymalloc.o test4.o -o test4

@@ -2,8 +2,10 @@
 
 this program is a library meant to be used in multiple test files
 
-it displays the info of a chunk created by malloc and all chunks after it, if any
-it's supposed to be used with the first chunk created by malloc so that when executed it displays all chunks in our array of memory
+it's supposed to take the first chunk created by malloc as a parameter
+when executed it displays the info of all chunks currently stored in memory
+will go out of bounds if it's not called on the current first chunk
+ 
 */
 
 #include "iterate_chunks.h"
@@ -11,7 +13,7 @@ it's supposed to be used with the first chunk created by malloc so that when exe
 
 void print_chunk_info(unsigned int* ptr) {
     if(ptr == NULL){
-        printf("null pointer\n");
+        fprintf(stderr, "error null pointer\n");
     } else {
         unsigned int size = *(ptr - 2), is_allocated = *(ptr - 1);
         printf("\tchunk %p\t\tis_allocated %i\t\tsize %i\n", ptr, is_allocated, size);
@@ -21,7 +23,8 @@ void print_chunk_info(unsigned int* ptr) {
 
 void display_all_chunks(unsigned int* first){
     if(first == NULL){
-        printf("ERROR NULL PTR");
+        fprintf(stderr, "ERROR NULL PTR\n");
+        return;
     }
     int bytes_left = MEMORY_AVAILABLE;
 

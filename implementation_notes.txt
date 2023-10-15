@@ -1,6 +1,7 @@
 *delete this before submitting*
 
 to be implemented:
+- clean up coalesce
 - memgrind.c
 - test files
 - last: project README
@@ -45,6 +46,8 @@ idea:
  - is it ok if our implementation was slightly different than the writeup but it behaves the same
     - we used struct pointers to iterate and not char pointers
     - init to one big chunk thats not size 0
+- can you use errno for error handling even though no outside memory?
+- i did the timing for memgrind slightly differently using cpu time instead of wall clock time is this ok
+- pseudo random numebrs for task 3 ok?
 
  - do we put the executables in the final tar submission?
- 
