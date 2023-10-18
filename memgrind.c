@@ -4,6 +4,7 @@
 #include "mymalloc.h"
 #include "iterate_chunks.h"
 
+void* chunk_iterator;
 
 static double run_50_times(void (*task)()) {
     double time = 0;
@@ -60,44 +61,33 @@ static void task_3() {
     }
 }
 
-static void task_4() { // tests coalesce, tests if malloc can handle chunks of varying sizes, malloc can handle requests when memory is full
+static void task_4() { // tests if malloc can handle chunks of varying sizes, if chunks will coalesce in random order
     void* objects[120];
+    int indexes[120]; // will indicate order in which chunks are freed
 
-    // allocates 120 objects of random size and then frees from back to front to test coalesce
+    // allocates 120 objects of random size
     for(int i = 0; i < 120; i++) {
-        objects[i] = malloc(rand() % 100);
+        objects[i] = malloc(rand() % 24);
+        indexes[i] = i;
     }
 
-    for(int i = 119; i >= 0; i--) {
-        free(objects[i]);
-        //display_all_chunks(placeholder);
+    // shuffles indexes
+    for(int i = 0; i < 120; i++){
+        int x = rand() % 120, y = rand() % 120;
+        int temp = indexes[x];
+        indexes[x] = indexes[y];
+        indexes[y] = temp;
     }
 
-    // allocates 120 objects of random size and then frees from front to back to test coalesce
+    // frees chunks pseudorandomly
     for(int i = 0; i < 120; i++) {
-    objects[i] = malloc(rand() % 100);
+        free(objects[indexes[i]]);
     }
-
-    for(int i = 0; i < 120; i++) {
-        free(objects[i]);
-        //display_all_chunks(placeholder);
-    }
-
-    // allocates 120 objects of random size and then frees at random to see if chunks will coalesce when freed in no order, free has adequate error handling for invalid addresses
-    for(int i = 0; i < 120; i++) {
-        objects[i] = malloc(rand() % 100);
-    }
-
-    for(int i = 0; i < 120; i++) {
-        free(objects[rand() % 120]);
-        //display_all_chunks(placeholder);
-    }
-
-    for(int i = 0; i < 120; i++) {
-        free(objects[i]);
-        //display_all_chunks(placeholder);
-    }
+    
+    // if test worked, there should be one free chunk of memlength
+    display_all_chunks(chunk_iterator);
 }
+
 
 static void task_5() {
 
@@ -105,7 +95,9 @@ static void task_5() {
 
 
 int main() {
-    //void* placeholder = malloc(0);
+    chunk_iterator = malloc(0);
+    free(chunk_iterator);
+    display_all_chunks(chunk_iterator);
 
     double average_time[5] = {run_50_times(task_1), run_50_times(task_2), run_50_times(task_3), run_50_times(task_4), 0};
 

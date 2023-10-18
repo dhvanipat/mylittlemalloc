@@ -1,10 +1,10 @@
 /* test program: iterate_chunks
 
-this program is a library meant to be used in multiple test files
+this program is a library meant to be used in multiple test file executables
 
-it's supposed to take the first chunk created by malloc as a parameter
+parameter: it's supposed to take a pointer to the payload of the first chunk created by malloc
 when executed it displays the info of all chunks currently stored in memory
-will go out of bounds if it's not called on the current first chunk
+will go out of bounds if it's not called on the first chunk
  
 */
 
