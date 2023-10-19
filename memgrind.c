@@ -83,7 +83,7 @@ static void task_4() { // tests if malloc can handle chunks of varying sizes, if
     for(int i = 0; i < 120; i++) {
         free(objects[indexes[i]]);
     }
-    
+
     // if test worked, there should be one free chunk of memlength
     display_all_chunks(chunk_iterator);
 }
