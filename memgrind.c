@@ -17,18 +17,19 @@ static double run_50_times(void (*task)()) {
         time += ((double)end - start) / CLOCKS_PER_SEC;
     }
 
+    display_all_chunks(chunk_iterator);
     time /= 50;
     return time;
 }
 
-static void task_1() {
+static void test1() {
     for(int i = 0; i < 120; i++){
         void* x = malloc(1);
         free(x);
     }
 }
 
-static void task_2() {
+static void test2() {
     void* objects[120];
     for(int i = 0; i < sizeof(objects)/sizeof(objects[0]); i++){
         objects[i] = malloc(1);
@@ -38,30 +39,38 @@ static void task_2() {
     }
 }
 
-static void task_3() {
-    void* objects[120];
-    int allocations = 0, index = 0;
+static void test3() {
+    char *ptrArray[120];  // Array to store 120 pointers
+    int allocated[120] = {0};  // Initialize the memory allocation status array
+    int loc = 0;  // Current location
 
-    while(allocations < 120) {
-        if (rand() % 2 == 0) { // allocating
-            objects[index] = malloc(1);
-            allocations++;
-            index++;
-        } else { // freeing
-            if (index > 0) {
-                index--;
-            }
-            free(objects[index]);   // done on purpose to see what free does if it's given a pointer that (A) has never been allocated, or (B) has already been freed           
+    for(int i = 0; i < 120; i++) {
+        if(loc == 0 || (rand() % 2 == 0 && loc < 120)) {
+            // Allocate 1 byte of memory and store the address
+            printf("alloc loc=%d\n", loc);
+            ptrArray[loc] = malloc(1);
+            allocated[loc] = 1;
+            loc++;
+        } else {
+            // Release the memory
+            loc--;
+            printf("free loc=%d\n", loc);
+            free(ptrArray[loc]);
+            allocated[loc] = 0;
         }
     }
 
-    while(index > 0) {
-        index--;
-        free(objects[index]);
+    printf("Process is done.\n");
+
+    // Clean up any unreleased memory
+    for(int i = 0; i < 120; i++) {
+        if(allocated[i] == 1) {
+            free(ptrArray[i]);
+        }
     }
 }
 
-static void task_4() { // tests if malloc can handle chunks of varying sizes, if chunks will coalesce in random order
+static void test4() { // tests if malloc can handle chunks of varying sizes, if chunks will coalesce in random order
     void* objects[120];
     int indexes[120]; // will indicate order in which chunks are freed
 
@@ -89,7 +98,7 @@ static void task_4() { // tests if malloc can handle chunks of varying sizes, if
 }
 
 
-static void task_5() {
+static void test5() {
 
 }
 
@@ -99,9 +108,7 @@ int main() {
     free(chunk_iterator);
     display_all_chunks(chunk_iterator);
 
-    double average_time[5] = {run_50_times(task_1), run_50_times(task_2), run_50_times(task_3), run_50_times(task_4), 0};
-
-    task_5();
+    double average_time[5] = {run_50_times(test1), run_50_times(test2), run_50_times(test3), run_50_times(test4), run_50_times(test5)};
 
     for(int i = 0; i < 5; i++) {
         printf("Task %d: \t Average Time: %lf\n", i + 1, average_time[i]);        
