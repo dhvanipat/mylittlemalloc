@@ -1,8 +1,9 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include "mymalloc.h"
+#include "iterate_chunks.h"
+
 int main(int argc, char **argv)
 {
     int x, *p;

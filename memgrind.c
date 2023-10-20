@@ -2,7 +2,6 @@
 #include <time.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/time.h>
 #include "mymalloc.h"
 #include "iterate_chunks.h"
 
@@ -16,7 +15,7 @@ static double run_50_times(void (*task)()) {
         start = clock();
         (*task)();
         end = clock();
-        time += ((double)end - start) / CLOCKS_PER_SEC;
+        time += ((double)end - start) / (CLOCKS_PER_SEC / 1000);
     }
 
     display_all_chunks(chunk_iterator);
@@ -108,22 +107,17 @@ static void test5() {
 
         free(a);
 
-        for(int index = 0; index < 120; index++){
-            a = malloc(sizeof(char));
-            ptr5[index] = a;
-        }
+        for(int j = 0; j < 2; j++) {
 
-        for(int index = 0; index < 120; index++){
-            free(ptr5[index]);
-        }
+            for(int index = 0; index < 120; index++){
+                a = malloc(sizeof(char));
+                ptr5[index] = a;
+            }
 
-        for(int index = 0; index < 120; index++){
-            a = malloc(sizeof(char));
-            ptr5[index] = a;
-        }
+            for(int index = 0; index < 120; index++){
+                free(ptr5[index]);
+            }
 
-        for(int index = 0; index < 120; index++){
-            free(ptr5[index]);
         }
     }
 }
@@ -136,7 +130,8 @@ int main() {
 
     double average_time[5] = {run_50_times(test1), run_50_times(test2), run_50_times(test3), run_50_times(test4), run_50_times(test5)};
 
+    printf("Average Time per Task in Milliseconds\n");
     for(int i = 0; i < 5; i++) {
-        printf("Task %d: \t Average Time: %lf\n", i + 1, average_time[i]);
+        printf("Task %d: \t Time: %lf ms\n", i + 1, average_time[i]);
     }
 }

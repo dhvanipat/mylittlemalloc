@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -g -Wall -Wvla -Werror -fsanitize=address,undefined
 
-# executables of test programs
+# test program executables
 memgrind: memgrind.o mymalloc.o iterate_chunks.o
 	$(CC) $(CFLAGS) memgrind.o mymalloc.o iterate_chunks.o -o memgrind
 	./memgrind
@@ -10,13 +10,15 @@ memtest: memtest.o mymalloc.o iterate_chunks.o
 	$(CC) $(CFLAGS) memtest.o mymalloc.o iterate_chunks.o -o memtest
 	./memtest
 
-test: test.o mymalloc.o
-	$(CC) $(CFLAGS) test.o mymalloc.o -o test
+edge_cases: edge_cases.o mymalloc.o iterate_chunks.o
+	$(CC) $(CFLAGS) edge_cases.o mymalloc.o iterate_chunks.o -o edge_cases
+	./edge_cases
 
-err: err.o mymalloc.o
-	$(CC) $(CFLAGS) err.o mymalloc.c -o err 
+detectable_errors: detectable_errors.o mymalloc.o iterate_chunks.o
+	$(CC) $(CFLAGS) detectable_errors.o mymalloc.c iterate_chunks.o -o detectable_errors 
+	./detectable_errors
 
-#test object files
+# test program object files
 memgrind.o: memgrind.c mymalloc.h iterate_chunks.h
 	$(CC) $(CFLAGS) -c memgrind.c
 
@@ -24,21 +26,19 @@ memgrind.o: memgrind.c mymalloc.h iterate_chunks.h
 memtest.o: memtest.c mymalloc.h iterate_chunks.h
 	$(CC) $(CFLAGS) -c memtest.c
 
-# include iterate chunks?
-err.o: err.c mymalloc.h
-	$(CC) $(CFLAGS) -c err.c
+detectable_errors.o: detectable_errors.c mymalloc.h
+	$(CC) $(CFLAGS) -c detectable_errors.c
 
-# include iterate chunks?
-test.o: test.c mymalloc.h
-	$(CC) $(CFLAGS) -c test.c
+edge_cases.o: edge_cases.c mymalloc.h
+	$(CC) $(CFLAGS) -c edge_cases.c
 
-#library object files
+# library object files
 iterate_chunks.o: iterate_chunks.h iterate_chunks.c
 	$(CC) $(CFLAGS) -c iterate_chunks.c
 
 mymalloc.o: mymalloc.h mymalloc.c
 	$(CC) $(CFLAGS) -c mymalloc.c
 
-#other
+# other
 clean:
-	rm *.o err memgrind memtest test
+	rm *.o err memgrind memtest edge_cases
