@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/time.h>
 #include "mymalloc.h"
 #include "iterate_chunks.h"
 
@@ -99,7 +101,31 @@ static void test4() { // tests if malloc can handle chunks of varying sizes, if 
 
 
 static void test5() {
+    for(int index = 0; index < 50; index++){
 
+        int *a = malloc(sizeof(char) * 4000);
+        void *ptr5[120];
+
+        free(a);
+
+        for(int index = 0; index < 120; index++){
+            a = malloc(sizeof(char));
+            ptr5[index] = a;
+        }
+
+        for(int index = 0; index < 120; index++){
+            free(ptr5[index]);
+        }
+
+        for(int index = 0; index < 120; index++){
+            a = malloc(sizeof(char));
+            ptr5[index] = a;
+        }
+
+        for(int index = 0; index < 120; index++){
+            free(ptr5[index]);
+        }
+    }
 }
 
 
@@ -111,6 +137,6 @@ int main() {
     double average_time[5] = {run_50_times(test1), run_50_times(test2), run_50_times(test3), run_50_times(test4), run_50_times(test5)};
 
     for(int i = 0; i < 5; i++) {
-        printf("Task %d: \t Average Time: %lf\n", i + 1, average_time[i]);        
+        printf("Task %d: \t Average Time: %lf\n", i + 1, average_time[i]);
     }
 }

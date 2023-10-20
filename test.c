@@ -7,7 +7,7 @@ int main(int argc, char **argv)
 {
     print("tests for some edge cases \n");
 
-    //test 1 allocates 0 bytes 
+    //test 1 allocates 0 bytes
     print("Test 1: Allocates 0 bytes\n");
 
     int *a = malloc(sizeof(char) * 0);
@@ -17,7 +17,7 @@ int main(int argc, char **argv)
          printf("Case Not Passed\n\n");
     }
 
-   //test 2 allocate bytes that exceeds the size 
+   //test 2 allocate bytes that exceeds the size
    printf("Test 2: Allocates Bytes That Exceeds\n")
    int *b = malloc(sizeof(char) * 4097);
    if (b == NULL) {
@@ -34,5 +34,4 @@ int main(int argc, char **argv)
   free(&d);
 
   return EXIT_SUCCESS;
-} 
-
+}
