@@ -173,11 +173,10 @@ void myfree(void *ptr, char *file, int line) {
          if(current_chunk->is_allocated == 1){
             current_chunk->is_allocated = 0;
             coalesce(ptr);
-            return;
          } else {
             double_free_error(file, line, ptr);
-            return;
          }
+         return;
       }
       current_chunk = next(current_chunk);
    }
