@@ -131,7 +131,6 @@ static void coalesce(chunkheader* ptr) {
 
 void *mymalloc(size_t size, char *file, int line) {
    chunkheader* current_chunk = (chunkheader*)memory; // index pointer to iterate through memory, starts at memory[0]
-
    if (current_chunk->total_size == 0) {
       init();
    }
@@ -173,11 +172,10 @@ void myfree(void *ptr, char *file, int line) {
          if(current_chunk->is_allocated == 1){
             current_chunk->is_allocated = 0;
             coalesce(ptr);
-            return;
          } else {
             double_free_error(file, line, ptr);
-            return;
          }
+         return;
       }
       current_chunk = next(current_chunk);
    }
