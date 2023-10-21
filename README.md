@@ -60,7 +60,8 @@ My Little Malloc Project
 
 
     memgrind test #4:
-    4) **add description here**
+    4) Create an array of 120 objects using malloc() of varying size, where the chunks are shuffled randomly. 
+       Then free all of these randomly arranged chunks.
 
     Time Taken to Count to 10^5:
     Average Time:
