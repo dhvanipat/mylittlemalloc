@@ -8,6 +8,24 @@ Collaborators
 ### Some Design Decisions
 - Edge case malloc(0)
     - Since the behavior of malloc(0) is implementation-defined, we decided to return a pointer to a chunk with no payload when malloc(0) is called, instead of returning null. This is tested in edge_cases.c.
+- Error handling
+    - We used <errno.h> to set errno and then print to stderr when there is invalid behavior in malloc or free. Each error is contained within a helper method in mymalloc.c
+    - malloc
+        - Errors when there is not enough memory available to complete the user's request. Prints file, line, and size parameter along with the error messgage "Cannot allocate memory"
+        - Ex: ERROR in edge_cases.c, line 29, malloc(4097): Cannot allocate memory
+    - free
+        - Errors when free() does not match a chunk to the pointer passed as a parameter for whatever reason. Prints file, line, and pointer passed to free along with the error messgage "Bad address" Could error because:
+            - The pointer does not point to memory allocated by malloc()
+            - The pointer does not point to the beginning of the payload
+            - The pointer has already been freed
+            - The pointer is null
+        - General case: Throws bad address exception
+        Ex: ERROR in edge_cases.c, line 42, free(0x7ffca074a4e8): Bad address
+
+        - Double free case: Throws bad address exception, adds "this memory is already free"
+        Ex: ERROR in detectable_errors.c, line 31, free(0x560063e64900), this memory is already free: Bad address
+
+
 
 ### Project Structure
 Implementation of Malloc
