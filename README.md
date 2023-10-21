@@ -1,102 +1,158 @@
-My Little Malloc Project
+# My Little Malloc Project
 
-    Collaborators
-    - Dhvani Patel (dgp69)
-    - Ananya Balaji (ab2389)
+Collaborators
+- Dhvani Patel, dgp69
+- Ananya Balaji, ab2389
 
-    Makefile
+## Design Notes
 
-    1) Performance Testing
-    make memgrind
-    ./memgrind
-    This was implemented to find time of each case running 50 times in terminal
+## Design
+### Some Design Decisions
+- Edge case malloc(0)
+    - Since the behavior of malloc(0) is implementation-defined, we decided to return a pointer to a chunk with no payload when malloc(0) is called, instead of returning null. This is tested in edge_cases.c
+    - 
 
-    2) Correctness Testing:
-    make err
-    ./ err with the case number (from 1 to 3)
-
-    3) Edge Case Testing:
-    make test
-    ./test
-    every case along with itself is printed in the console 
-
-    to compile all together
-    make all
-    then run ./memgrind /test ./err (with the case number 1 - 3)
-
-    make clean
-    available for cleaning source file 
-    rm -f *.o err memgrind mymalloc test
-
-    Test Plan
-    1) Performance Testing
-    File: memgrind.c
-    Purpose: We check the performance of the code under different stress conditions. We do a total of 5 tests.
-
-    memgrind test #1:
-    1)  malloc() and immediately free() a 1-byte chunk, 120 times.
-
-    Time Taken to Count to 10^5:
-    Average Time:
+Any Design Notes Worth Pointing Out
 
 
-    memgrind test #2:
-    2) Use malloc() to get 120 1-byte objects, storing the pointers in an array, then use free() to deallocate the chunks.
+### Project Structure
+Implementation of Malloc
+- mymalloc.c
+    - contains implementation of mymalloc() and myfree()
+    - holds memory array
+    - additional helper methods and macros
+- mymalloc.h
+    - header file for the public interface of mymalloc library
 
-    Time Taken to Count to 10^5:
-    Average Time:
+Test Files
+- iterate_chunks.c  
+    - helper library meant to be included in multiple test file executables
+    - prints diagnostic info about chunks and/or memory array for debugging and testing
+- iterate_chunks.h
+    - header file for include_chunks.c, contains two publicly accessible methods
+    - display_all_chunks(ptr)
+        - displays the current state of memory, all chunks in it
+    - print_chunk_info(ptr)
+        - displays information about a chunk like it's position in memory[], size, and whether it is in use
+- memgrind.c
+    - performance test of mymalloc() and free()
+    - runs five tests 50 times each and prints average time of each
+    - Test 1
+- memtest.c
+    - same memtest.c given in canvas
+    - correctness test of mymalloc(), tests if malloc will properly allocate bytes that can be used to store user data
+- edge_cases.c
+- detectable_errors.c
+    - 3 correctness tests as described in section 2 of the project writeup, titled detectable_errors
+    - tests if myfree() has working error handling
+    - Test 1: Calling free() with an address not obtained from malloc()
+    - Test 2: Calling free() with an address not at the start of a chunk
+    - Test 3: Calling free() a second time on the same pointer.
 
+Other
+- Makefile
+    - compiles source files, runs executables, cleans working directory
+    - We have 4 test executables: memgrind, memtest, edge_cases, and detectable_errors
+    - How to use: make each to compile and run the test file
+        - make memgrind
+        - make memtest
+        - make edge_cases
+        - make detectable_errors
 
+## Testing
 
-
-    memgrind test #3:
-    3) Create an array of 120 pointers. Repeatedly make a random choice between allocating a 1-byte object and 
-    adding the pointer to the array and deallocating a previously allocated object (if any), until you have 
-    allocated 120 times. Deallocate any remaining objects.
-
-    Time Taken to Count to 10^5:
-    Average Time:
-
-
-
-    memgrind test #4:
-    4) **add description here**
-
-    Time Taken to Count to 10^5:
-    Average Time:
-
-
-
-
-    memgrind test #5:
-    5) Allocate a 4000 byte chunk and free it, then use a ptr5 array to store all 120 allocations, then
-      free everything. After it, the process is repeated with storing 120 allocations and then they are all freed.
-
-    Time Taken to Count to 10^5:
-    Average Time:
-
-
-
-
-    Unit Tests for some Edge Cases
-    Test 1 Allocates 0 Bytes
-    Output:
-
-    Test 2 Allocates 0 Bytes
-    Output:
-
-    Test 3 Tries to free when there are no allocations/pointers in memory, with different pointers.
-    Output:
-
-
-
+Descriptions of our Test Programs
+- include any arguments they take
 
 
+### Performance Testing
+make memgrind
+./memgrind
+This was implemented to find time of each case running 50 times in terminal
 
-    Descriptions of our Test Programs
-    - include any arguments they take
+### Correctness Testing:
+make err
+./ err with the case number (from 1 to 3)
 
-    Any Design Notes Worth Pointing Out
+### Edge Case Testing:
+make test
+./test
+every case along with itself is printed in the console 
+
+to compile all together
+make all
+then run ./memgrind /test ./err (with the case number 1 - 3)
+
+make clean
+available for cleaning source file 
+rm -f *.o err memgrind mymalloc test
+
+Test Plan
+1) Performance Testing
+File: memgrind.c
+Purpose: We check the performance of the code under different stress conditions. We do a total of 5 tests.
+
+memgrind test #1:
+1)  malloc() and immediately free() a 1-byte chunk, 120 times.
+
+Time Taken to Count to 10^5:
+Average Time:
+
+
+memgrind test #2:
+2) Use malloc() to get 120 1-byte objects, storing the pointers in an array, then use free() to deallocate the chunks.
+
+Time Taken to Count to 10^5:
+Average Time:
+
+
+
+
+memgrind test #3:
+3) Create an array of 120 pointers. Repeatedly make a random choice between allocating a 1-byte object and 
+adding the pointer to the array and deallocating a previously allocated object (if any), until you have 
+allocated 120 times. Deallocate any remaining objects.
+
+Time Taken to Count to 10^5:
+Average Time:
+
+
+
+memgrind test #4:
+4) **add description here**
+
+Time Taken to Count to 10^5:
+Average Time:
+
+
+
+
+memgrind test #5:
+5) Allocate a 4000 byte chunk and free it, then use a ptr5 array to store all 120 allocations, then
+free everything. After it, the process is repeated with storing 120 allocations and then they are all freed.
+
+Time Taken to Count to 10^5:
+Average Time:
+
+
+
+
+Unit Tests for some Edge Cases
+Test 1 Allocates 0 Bytes
+Output:
+
+Test 2 Allocates 0 Bytes
+Output:
+
+Test 3 Tries to free when there are no allocations/pointers in memory, with different pointers.
+Output:
+
+
+
+
+
+
+
 
 
 
@@ -107,23 +163,6 @@ My Little Malloc Project
 *delete this before submitting*
 
 to be implemented:
-- test files
-    - come up with 1 more stress test for memgrind
-- last: project README
+- test files make sure all cases are covered
 
-
-
-questions:
-- malloc(0) returns null or a pointer?
-    - mention in readme intentional
-
-
-check readme
-check err
-check edge_cases
-
-discussion:
-
-what did ur friend do diff in memgrind
-fix makefile
-  - add chunk iterator?
+check detectable_errors

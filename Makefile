@@ -41,4 +41,4 @@ mymalloc.o: mymalloc.h mymalloc.c
 
 # other
 clean:
-	rm *.o err memgrind memtest edge_cases
+	rm *.o detectable_errors memgrind memtest edge_cases

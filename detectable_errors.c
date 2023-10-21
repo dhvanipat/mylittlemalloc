@@ -6,6 +6,9 @@
 
 int main(int argc, char **argv)
 {
+    void* iterator = malloc(0);
+    free(iterator);
+
     int x, *p;
     int test = argc > 1 ? atoi(argv[1]) : 0;
 
@@ -28,6 +31,6 @@ int main(int argc, char **argv)
         free(p);
         break;
     }
-
+    display_all_chunks(iterator);
     return EXIT_SUCCESS;
 }

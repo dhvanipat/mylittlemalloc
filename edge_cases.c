@@ -8,6 +8,7 @@ int main(int argc, char **argv)
 {
       unsigned int* foo = malloc(0);
       free(foo);
+
       display_all_chunks(foo);
 
       printf("tests for some edge cases \n");

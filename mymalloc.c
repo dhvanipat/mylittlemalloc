@@ -131,7 +131,6 @@ static void coalesce(chunkheader* ptr) {
 
 void *mymalloc(size_t size, char *file, int line) {
    chunkheader* current_chunk = (chunkheader*)memory; // index pointer to iterate through memory, starts at memory[0]
-
    if (current_chunk->total_size == 0) {
       init();
    }
