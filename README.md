@@ -33,7 +33,7 @@ Test Files (See below for a more detailed explanation of our testing)
 - memtest.c
     - correctness test of mymalloc()
 - edge_cases.c
-    - Edge case test of mymalloc() and free()
+    - tests some edge cases of mymalloc() and free()
 - detectable_errors.c
     - correctness test of myfree()
 
